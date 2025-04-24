@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Інвестиційний Проект</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            position: relative;
+            background-color: #f0f0f0;
+            background-image: url('фон.jpg'); /* Замініть на своє зображення або залиште пустим, якщо фон не потрібен */
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center center;
+        }
+
+        .container {
+            max-width: 400px;
+            width: 100%;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            background-color: rgba(255, 255, 255, 0.8); /* Щоб відео стало фоном, задаємо прозорий білий фон */
+            border-radius: 30px;
+        }
+
+        .balance-container {
+            text-align: center;
+            margin-bottom: -40px;
+            top: -20px;
+            position: relative;
+            z-index: 2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: transparent; /* Видаляємо сірий фон */
+        }
+
+        .balance {
+            font-size: 24px;
+            font-weight: bold;
+            color: black;
+            cursor: pointer;
+            border: none;
+            background: none; /* Видаляємо фон */
+            font-family: inherit;
+            display: inline-block;
+            position: relative;
+            margin-left: 5px;
+        }
+
+        .balance-image {
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            border-radius: 50%;
+            margin-right: -15px;
+        }
+
+        .buttons {
+            display: none;
+            position: absolute;
+            top: 60%;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: transparent;
+            border: none;
+            z-index: 3;
+            text-align: center;
+            padding: 10px;
+            display: flex;
+            gap: 10px; /* Додаємо проміжок між кнопками */
+        }
+
+            .buttons button {
+                padding: 8px 16px;
+                cursor: pointer;
+                background-color: darkgreen;
+                color: white;
+                border: none;
+                border-radius: 10px;
+            }
+
+        .pyramid {
+            display: none;
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .level {
+            width: 200px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            text-align: center;
+            margin: 10px auto;
+            background-color: #fff;
+            border-radius: 10px;
+        }
+
+            .level h2 {
+                margin-top: 0;
+                font-size: 1.2em;
+            }
+
+            .level img {
+                max-width: 100%;
+                margin-bottom: 10px;
+                border-radius: 10px;
+            }
+
+        .profit-label {
+            background-color: lime;
+            color: white;
+            padding: 3px 5px;
+            font-size: 0.8em;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            display: inline-block;
+        }
+
+        button {
+            margin: 10px 0;
+            padding: 10px 20px;
+            cursor: pointer;
+            border: none;
+            background-color: darkred;
+            color: white;
+            border-radius: 10px;
+            font-size: 1.1em;
+        }
+
+            button:disabled {
+                background-color: #666;
+                cursor: not-allowed;
+            }
+
+        .hidden {
+            display: none;
+        }
+
+        .progress-bar-container {
+            width: 100%;
+            background-color: #ccc;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+
+        .progress-bar {
+            height: 20px;
+            background-color: #4caf50;
+            width: 0%; /* Початкова ширина прогрес-бару */
+        }
+
+        .fade-in {
+            opacity: 0;
+            transition: opacity 3s;
+        }
+
+            .fade-in.show {
+                opacity: 1;
+            }
+
+        .video-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0; /* Початкова прозорість 0 */
+            transition: opacity 5s ease; /* Анімація прозорості триває 5 секунд */
+        }
+
+            .video-container.show {
+                opacity: 1; /* Під час анімації досягаємо повної прозорості */
+            }
+
+        .video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            pointer-events: none;
+        }
+
+        /* Стилі для кнопки магазину */
+        #carsButton {
+            position: fixed;
+            bottom: -5px;
+            left: 46%;
+            padding: 12px 24px;
+            font-size: 1.1em;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            z-index: 999; /* Забезпечуємо, щоб кнопка була поверх інших елементів */
+            transition: transform 0.2s ease-in-out;
+        }
+
+            #carsButton:hover {
+                transform: scale(1.1);
+            }
+
+        /* Стилі для кнопки "Забрати прибуток" */
+        .return-button {
+            margin-top: 10px;
+            padding: 10px 20px;
+            cursor: pointer;
+            border: none;
+            background-color: navy;
+            color: white;
+            border-radius: 10px;
+            font-size: 1.1em;
+            opacity: 0.5;
+            transition: transform 0.2s ease-in-out;
+        }
+
+            .return-button:disabled {
+                background-color: #666;
+                cursor: not-allowed;
+                opacity: 0.5;
+            }
+
+        /* Стилі для спливаючих вікон */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 10px;
+            border-radius: 10px;
+            text-align: center;
+            max-width: 400px;
+            margin: auto;
+        }
+
+        .modal-button {
+            margin-top: 10px;
+            padding: 10px 20px;
+            cursor: pointer;
+            border: none;
+            background-color: darkgreen;
+            color: white;
+            border-radius: 10px;
+            font-size: 1.1em;
+        }
+
+        /* Приклад анімації для кнопок */
+        button {
+            transition: transform 0.2s ease-in-out;
+        }
+
+            button:hover {
+                transform: scale(1.1);
+            }
+
+    </style>
+</head>
+<body>
+    <div class="video-container">
+        <video class="video" id="backgroundVideo" autoplay muted loop>
+            <source src="background_video.mp4" type="video/mp4"> <!-- Замініть на своє відео -->
+            Ваш браузер не підтримує тег відео.
+        </video>
+    </div>
+
+    <div class="container">
+        <div class="balance-container">
+            <img src="toncoin.png" alt="Зображення балансу" class="balance-image" id="balanceImage">
+            <button class="balance" id="balanceButton">
+                Ton: <span id="balanceAmount">0</span>
+            </button>
+            <div class="buttons" id="actionButtons">
+                <div style="display: flex; gap: 10px;">
+                    <button id="depositButton">Поповнити</button>
+                    <button id="withdrawButton">Вивести</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Кнопка магазину -->
+        <button id="carsButton">Магазин</button>
+
+        <div class="pyramid fade-in" id="pyramidMenu">
+            <div class="level">
+                <h2>Рівень 1</h2>
+                <img src="Рівень1.jpg" alt="Зображення 1">
+                <div class="profit-label">Прибуток: +0.125 TON</div>
+                <div class="progress-bar-container hidden" id="level1ProgressBarContainer">
+                    <div class="progress-bar" id="level1ProgressBar"></div>
+                </div>
+                <button id="level1Button" data-video="Рівень1.mp4" disabled>Купити (0.25 TON)</button>
+                <button id="level1ReturnButton" class="return-button hidden" disabled>Забрати прибуток</button>
+            </div>
+            <div class="level">
+                <h2>Рівень 2</h2>
+                <img src="Рівень2.jpg" alt="Зображення 2">
+                <div class="profit-label">Прибуток: +0.22 TON</div>
+                <div class="progress-bar-container hidden" id="level2ProgressBarContainer">
+                    <div class="progress-bar" id="level2ProgressBar"></div>
+                </div>
+                <button id="level2Button" data-video="Рівень2.mp4" disabled>Купити (0.5 TON)</button>
+                <button id="level2ReturnButton" class="return-button hidden" disabled>Забрати прибуток</button>
+            </div>
+            <div class="level">
+                <h2>Рівень 3</h2>
+                <img src="Рівень3.jpg" alt="Зображення 3">
+                <div class="profit-label">Прибуток: +0.4 TON</div>
+                <div class="progress-bar-container hidden" id="level3ProgressBarContainer">
+                    <div class="progress-bar" id="level3ProgressBar"></div>
+                </div>
+                <button id="level3Button" data-video="Рівень3.mp4" disabled>Купити (1 TON)</button>
+                <button id="level3ReturnButton" class="return-button hidden" disabled>Забрати прибуток</button>
+            </div>
+        </div>
+    </div>
+
+        <div id="modal" class="modal">
+        <div class="modal-content">
+            <p id="modalMessage"></p>
+            <button id="modalCloseButton" class="modal-button">В путь!</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const balanceButton = document.getElementById('balanceButton');
+            const balanceImage = document.getElementById('balanceImage');
+            const actionButtons = document.getElementById('actionButtons');
+            const depositButton = document.getElementById('depositButton');
+            const withdrawButton = document.getElementById('withdrawButton');
+            const carsButton = document.getElementById('carsButton');
+            const pyramidMenu = document.getElementById('pyramidMenu');
+
+            const videoContainer = document.querySelector('.video-container');
+            const promoVideo = document.getElementById('backgroundVideo');
+
+            let menuVisible = false;
+            let carsVisible = false;
+
+            let balance = 0;
+            const level1Cost = 0.25;
+            const level2Cost = 0.5;
+            const level3Cost = 1;
+
+            const balanceAmount = document.getElementById('balanceAmount');
+            const level1Button = document.getElementById('level1Button');
+            const level1ProgressBar = document.getElementById('level1ProgressBar');
+            const level1ProgressBarContainer = document.getElementById('level1ProgressBarContainer');
+            const level1ReturnButton = document.getElementById('level1ReturnButton');
+            const level2Button = document.getElementById('level2Button');
+            const level2ProgressBar = document.getElementById('level2ProgressBar');
+            const level2ProgressBarContainer = document.getElementById('level2ProgressBarContainer');
+            const level2ReturnButton = document.getElementById('level2ReturnButton');
+            const level3Button = document.getElementById('level3Button');
+            const level3ProgressBar = document.getElementById('level3ProgressBar');
+            const level3ProgressBarContainer = document.getElementById('level3ProgressBarContainer');
+            const level3ReturnButton = document.getElementById('level3ReturnButton');
+            const modal = document.getElementById('modal');
+            const modalMessage = document.getElementById('modalMessage');
+            const modalCloseButton = document.getElementById('modalCloseButton');
+
+            let level1Invested = false;
+            let level2Invested = false;
+            let level3Invested = false;
+
+            function updateBalance() {
+                balanceAmount.textContent = balance.toFixed(2);
+                level1Button.disabled = balance < level1Cost || level1Invested;
+                level2Button.disabled = balance < level2Cost || level2Invested;
+                level3Button.disabled = balance < level3Cost || level3Invested;
+            }
+
+            function toggleMenu() {
+                if (menuVisible) {
+                    actionButtons.style.display = 'none';
+                    document.querySelector('.balance-container').style.marginBottom = '-40px'; // Зміна стилю marginBottom
+                    menuVisible = false;
+                } else {
+                    actionButtons.style.display = 'block';
+                    document.querySelector('.balance-container').style.marginBottom = '-5px'; // Зміна стилю marginBottom
+                    menuVisible = true;
+                }
+            }
+
+            balanceButton.addEventListener('click', toggleMenu);
+            balanceImage.addEventListener('click', toggleMenu);
+
+
+            depositButton.addEventListener('click', function () {
+                const depositAmount = parseFloat(prompt('Введіть суму для поповнення:', '0'));
+                if (!isNaN(depositAmount) && depositAmount > 0) {
+                    balance += depositAmount;
+                    updateBalance();
+                } else {
+                    alert('Невірна сума.');
+                }
+            });
+
+            withdrawButton.addEventListener('click', function () {
+                const withdrawAmount = parseFloat(prompt('Введіть суму для виводу:', '0'));
+                if (!isNaN(withdrawAmount) && withdrawAmount > 0 && withdrawAmount <= balance) {
+                    balance -= withdrawAmount;
+                    updateBalance();
+                } else {
+                    alert('Невірна сума або недостатньо коштів.');
+                }
+            });
+
+            carsButton.addEventListener('click', function () {
+                if (carsVisible) {
+                    pyramidMenu.classList.remove('show');
+                    pyramidMenu.style.display = 'none';
+                    carsVisible = false;
+                } else {
+                    pyramidMenu.style.display = 'block';
+                    setTimeout(() => pyramidMenu.classList.add('show'), 10);
+                    carsVisible = true;
+                }
+            });
+
+            function updateProgressBar(progressBar, duration, returnButton) {
+                const startTime = Date.now();
+                const endTime = startTime + duration;
+
+                function update() {
+                    const currentTime = Date.now();
+                    const timeLeft = endTime - currentTime;
+                    const progress = Math.max(0, (timeLeft / duration) * 100);
+                    progressBar.style.width = progress + '%';
+
+                    if (timeLeft > 0) {
+                        requestAnimationFrame(update);
+                    } else {
+                        returnButton.disabled = false;
+                        returnButton.classList.remove('hidden');
+                        returnButton.addEventListener('click', function () {
+                            if (progress === 0) {
+                                balance += parseFloat(progressBar.dataset.amount);
+                                updateBalance();
+                                progressBar.classList.add('hidden');
+                                returnButton.classList.add('hidden');
+                            }
+                        });
+                        alert("Машина доїхала до місця призначення!");
+                    }
+                }
+
+                update();
+            }
+
+            function showVideo(videoSource) {
+                promoVideo.src = videoSource;
+                promoVideo.play();
+                videoContainer.classList.add('show'); // Додаємо клас для запуску CSS анімації
+            }
+
+            function hideVideo() {
+                promoVideo.pause();
+                promoVideo.currentTime = 0;
+            }
+
+            actionButtons.style.display = 'none'
+
+            balanceButton.addEventListener('click', () => {
+                actionButtons.style.display = actionButtons.style.display === 'none'
+            });
+
+            function showModal(message) {
+                modalMessage.textContent = message;
+                modal.style.display = 'flex';
+            }
+
+            modalCloseButton.addEventListener('click', () => {
+                modal.style.display = 'none';
+            });
+
+            document.getElementById('level1Button').addEventListener('click', () => {
+                showModal("Вы только что ограбили ларёк с шаурмой, вас преследует полиция и вам нужно уехать в другой город что бы залечь на дно.");
+                showProgressBar(document.getElementById('level1ProgressBar'), document.getElementById('level1ReturnButton'));
+            });
+
+            document.getElementById('level2Button').addEventListener('click', () => {
+                showModal("Вы только что ограбили супермаркет, вас преследует полиция и вам нужно уехать в другой город что бы залечь на дно.");
+                showProgressBar(document.getElementById('level2ProgressBar'), document.getElementById('level2ReturnButton'));
+            });
+
+            document.getElementById('level3Button').addEventListener('click', () => {
+                showModal("Вы только что ограбили банкомат, вас преследует полиция и вам нужно уехать в другой город что бы залечь на дно.");
+                showProgressBar(document.getElementById('level3ProgressBar'), document.getElementById('level3ReturnButton'));
+            });
+
+            level1Button.addEventListener('click', function () {
+                if (!level1Invested && balance >= level1Cost) {
+                    balance -= level1Cost;
+                    updateBalance();
+                    level1Invested = true;
+                    level1ProgressBar.dataset.amount = '0.125';
+                    level1ProgressBarContainer.classList.remove('hidden');
+                    updateProgressBar(level1ProgressBar, 6 * 60 * 60 * 1000, level1ReturnButton);
+                    showVideo(level1Button.getAttribute('data-video'));
+                    level1Button.textContent = 'Забрати прибуток';
+                    level1Button.disabled = true; // Заблокувати кнопку при купівлі
+                    level1ReturnButton.classList.add('hidden'); // Додатково ховаємо кнопку при купівлі
+                    carsButton.click();
+                }
+            });
+
+            level2Button.addEventListener('click', function () {
+                if (!level2Invested && balance >= level2Cost) {
+                    balance -= level2Cost;
+                    updateBalance();
+                    level2Invested = true;
+                    level2ProgressBar.dataset.amount = '0.22';
+                    level2ProgressBarContainer.classList.remove('hidden');
+                    updateProgressBar(level2ProgressBar, 6 * 60 * 60 * 1000, level2ReturnButton);
+                    showVideo(level2Button.getAttribute('data-video'));
+                    level2Button.textContent = 'Забрати прибуток';
+                    level2Button.disabled = true; // Заблокувати кнопку при купівлі
+                    level2ReturnButton.classList.add('hidden'); // Додатково ховаємо кнопку при купівлі
+                    carsButton.click();
+                }
+            });
+
+            level3Button.addEventListener('click', function () {
+                if (!level3Invested && balance >= level3Cost) {
+                    balance -= level3Cost;
+                    updateBalance();
+                    level3Invested = true;
+                    level3ProgressBar.dataset.amount = '0.4';
+                    level3ProgressBarContainer.classList.remove('hidden');
+                    updateProgressBar(level3ProgressBar, 6 * 60 * 60 * 1000, level3ReturnButton);
+                    showVideo(level3Button.getAttribute('data-video'));
+                    level3Button.textContent = 'Забрати прибуток';
+                    level3Button.disabled = true; // Заблокувати кнопку при купівлі
+                    level3ReturnButton.classList.add('hidden'); // Додатково ховаємо кнопку при купівлі
+                    carsButton.click();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
